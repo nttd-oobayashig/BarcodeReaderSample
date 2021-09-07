@@ -19,21 +19,21 @@ var startScanner = () => {
             type: "LiveStream",
             target: document.querySelector('#photo-area'),
             constraints: {
-                decodeBarCodeRate: 3,
-                successTimeout: 500,
-                codeRepetition: true,
-                tryVertical: true,
-                frameRate: parseInt($('#framerate').val()),
-                width: 1600,
-                height: 1200,
-                facingMode: "environment",
-                area: { top: "0%", right: "0%", left: "0%", bottom: "0%" }
+                facingMode: "environment"
             },
+            area: { top: "20%", right: "0%", left: "0%", bottom: "20%" },
+            singleChannel: false
         },
+        frequency: parseInt($('#framerate').val()),
         decoder: {
-            readers: [
-                "code_39_reader"
-            ]
+            readers: ["code_39_reader"],
+            multiple: false,
+            debug: {
+                drawBoundingBox: false,
+                showFrequency: false,
+                drawScanline: false,
+                showPattern: false
+            }
         },
 
     }, function (err) {
@@ -41,6 +41,18 @@ var startScanner = () => {
             console.log(err);
             return
         }
+
+        let canvas = document.getElementById("frame");
+        let ctx = canvas.getContext("2d");
+        const x = 0;
+        const y = Quagga.canvas.dom.overlay.height * 0.2;
+        const mw = Quagga.canvas.dom.overlay.width;
+        const mh = Quagga.canvas.dom.overlay.height * 0.6;
+
+        ctx.strokeStyle = "rgb(255,0,0)";
+        ctx.lineWidth = 3;
+        ctx.rect(x,y,mw,mh);
+        ctx.stroke();
 
         console.log("Initialization finished. Ready to start");
         Quagga.start();
@@ -50,9 +62,14 @@ var startScanner = () => {
     });
 
     Quagga.onProcessed(function (result) {
-        var drawingCtx = Quagga.canvas.ctx.overlay,
-            drawingCanvas = Quagga.canvas.dom.overlay;
-        console.log("test");
+        let drawingCtx = Quagga.canvas.ctx.overlay;
+        let drawingCanvas = Quagga.canvas.dom.overlay;
+
+        const x = 0;
+        const y = drawingCanvas.height * 0.2;
+        const mw = drawingCanvas.width;
+        const mh = drawingCanvas.height * 0.8;
+
         if (result) {
             // 検出中の緑の線の枠
             if (result.boxes) {
@@ -67,17 +84,6 @@ var startScanner = () => {
                         color: "green",
                         lineWidth: 2
                     });
-                });
-            }
-
-            // 読込中の青枠
-            if (result.box) {
-                Quagga.ImageDebug.drawPath(result.box, {
-                    x: 0,
-                    y: 1
-                }, drawingCtx, {
-                    color: "#00F",
-                    lineWidth: 2
                 });
             }
 
@@ -103,7 +109,7 @@ var startScanner = () => {
             DetectedCount = 0;
             DetectedCode = result.codeResult.code;
         }
-        if (DetectedCount >= paserInt($('#DetectedCount').val())) {
+        if (DetectedCount >= parseInt($('#DetectedCount').val())) {
             console.log(result.codeResult.code);
             DetectedCode = '';
             DetectedCount = 0;

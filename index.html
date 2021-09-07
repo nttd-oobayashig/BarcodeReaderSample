@@ -12,11 +12,10 @@
             width: auto;
             height: auto;
         }
-        /*
         #photo-area.viewport canvas.drawingBuffer, video.drawingBuffer {
-            margin-left: -320px;
+            position: absolute;
+            left: 0;
         }
-        */
     </style>
 </head >
 
@@ -42,11 +41,13 @@
             <input class="col-3" type="text" id="result" disabled value="">
         </div>
         <div>
-            <label for="settig" class="col-2">NowSetting:</label>
-            <input id="setting" class="col-4" disabled>
+            <label for="settig" class="col-2">Setting:</label>
+            <input id="setting" class="col-6" disabled>
             <input type="button" id="reload" value="restart" class="col-1">
         </div>
-        <div id="photo-area" class="viewport"> </div>
+        <div id="photo-area" class="viewport">
+            <canvas id="frame" class="drawingBuffer"></canvas>
+        </div>
     </div>
 
 
