@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>バーコード認識テスト用</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style type="text/css">
+        #photo-area.viewport {
+            width: auto;
+        }
+        #photo-area.viewport canvas, video {
+            float: left;
+            width: auto;
+            height: auto;
+        }
+        #photo-area.viewport canvas.drawingBuffer, video.drawingBuffer {
+            margin-left: -320px;
+        }
+    </style>
+</head >
+
+<body>
+    <h3>バーコード認識テスト用</h3>
+    <div>
+        <div>
+            <label for="framerate" class="col-2">フレームレート：</label>
+            <input type="number" id="framerate" value="15" step="1" min="1" max="60" class="col-1" />
+        </div>
+        <div>
+            <label for="" class="col-2">：</label> 
+            <input type="number" id="" value="15" step="1" min="1" max="60" class="col-1" />
+        </div>
+        <div>
+            <label for="DetectedCount" class="col-2">認識回数閾値：</label> 
+            <input type="number" id="DetectedCount" value="15" step="1" min="1" max="60" class="col-1" />
+        </div>
+        <div>
+            <label for="result" class="col-2">Result：</label>
+            <input class="col-3" type="text" id="result" disabled value="">
+        </div>
+        <div>
+            <label for="settig" class="col-2">NowSetting:</label>
+            <input id="setting" class="col-4" disabled>
+            <input type="button" value="reload" class="col-1">
+        </div>
+        <div id="photo-area" class="viewport"> </div>
+    </div>
+
+
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
+<script src="./js/quagga.min.js" type="text/javascript"></script>
+
+<script>
+    $(function () {
+
+        startScanner();
+
+    });
+    var DetectedCount = 0, DetectedCode = "";
+
+    const startScanner = () => {
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#photo-area'),
+                constraints: {
+                    decodeBarCodeRate: 3,
+                    successTimeout: 500,
+                    codeRepetition: true,
+                    tryVertical: true,
+                    frameRate: parseInt($('#framerate').val()),
+                    width: 640,
+                    height: 480,
+                    // バックカメラの利用を設定. (フロントカメラは"user")
+                    facingMode: "environment",
+                    // 検出範囲の指定: 上下20%は対象外
+                    area: { top: "20%", right: "0%", left: "0%", bottom: "20%" }
+                },
+            },
+            decoder: {
+                readers: [
+                    "code_39_reader"
+                ]
+            },
+
+        }, function (err) {
+            if (err) {
+                console.log(err);
+                return
+            }
+
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+
+            // Set flag to is running
+            _scannerIsRunning = true;
+        });
+
+        Quagga.onProcessed(function (result) {
+            var drawingCtx = Quagga.canvas.ctx.overlay,
+                drawingCanvas = Quagga.canvas.dom.overlay;
+
+            if (result) {
+                // 検出中の緑の線の枠
+                if (result.boxes) {
+                    drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                    result.boxes.filter(function (box) {
+                        return box !== result.box;
+                    }).forEach(function (box) {
+                        Quagga.ImageDebug.drawPath(box, {
+                            x: 0,
+                            y: 1
+                        }, drawingCtx, {
+                            color: "green",
+                            lineWidth: 2
+                        });
+                    });
+                }
+
+                // 読込中の青枠
+                if (result.box) {
+                    Quagga.ImageDebug.drawPath(result.box, {
+                        x: 0,
+                        y: 1
+                    }, drawingCtx, {
+                        color: "#00F",
+                        lineWidth: 2
+                    });
+                }
+
+                // 検出完了時の赤線
+                if (result.codeResult && result.codeResult.code) {
+                    Quagga.ImageDebug.drawPath(result.line, {
+                        x: 'x',
+                        y: 'y'
+                    }, drawingCtx, {
+                        color: 'red',
+                        lineWidth: 3
+                    });
+                }
+            }
+        });
+
+        //barcode read call back
+        Quagga.onDetected(function (result) {
+            console.log(result.codeResult.code);
+            if (DetectedCode == result.codeResult.code) {
+                DetectedCount++;
+            } else {
+                DetectedCount = 0;
+                DetectedCode = result.codeResult.code;
+            }
+            if (DetectedCount >= 10) {
+                console.log(result.codeResult.code);
+                DetectedCode = '';
+                DetectedCount = 0;
+                $('#result').val(result.codeResult.code);
+                document.getElementById("photo-area").style.display = "none";
+                Quagga.stop()
+            }
+        });
+    }
+</script>
+
+</html >
