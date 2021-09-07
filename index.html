@@ -16,15 +16,27 @@
             position: absolute;
             left: 0;
         }
+        .frameCanvas{
+            position: absolute;
+            left: 0;
+        }
     </style>
 </head >
 
-<body>
+<body style="width: 640px;">
     <h3>バーコード認識テスト用</h3>
     <div>
         <div>
-            <label for="framerate" class="col-2">フレームレート：</label>
+            <label for="framerate" class="col-3">フレームレート：</label>
             <input type="number" id="framerate" value="15" step="1" min="1" max="60" class="col-1" />
+        </div>
+        <div>
+            <label for="DetectedCount" class="col-3">認識回数閾値：</label> 
+            <input type="number" id="DetectedCount" value="10" step="1" min="1" max="20" class="col-1" />
+        </div>
+        <div>
+            <label for="result" class="col-3">Result：</label>
+            <input class="col-3" type="text" id="result" disabled value="">
         </div>
         <!--
         <div>
@@ -33,20 +45,12 @@
         </div>
         -->
         <div>
-            <label for="DetectedCount" class="col-2">認識回数閾値：</label> 
-            <input type="number" id="DetectedCount" value="10" step="1" min="1" max="20" class="col-1" />
-        </div>
-        <div>
-            <label for="result" class="col-2">Result：</label>
-            <input class="col-3" type="text" id="result" disabled value="">
-        </div>
-        <div>
-            <label for="settig" class="col-2">Setting:</label>
+            <label for="settig" class="col-3">Setting:</label>
             <input id="setting" class="col-6" disabled>
             <input type="button" id="reload" value="restart" class="col-1">
         </div>
         <div id="photo-area" class="viewport">
-            <canvas id="frame" class="drawingBuffer"></canvas>
+            <canvas id="frame" class="frameCanvas"></canvas>
         </div>
     </div>
 

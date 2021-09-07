@@ -42,7 +42,12 @@ var startScanner = () => {
             return
         }
 
+        console.log("Initialization finished. Ready to start");
+        Quagga.start();
+
         let canvas = document.getElementById("frame");
+        canvas.width = Quagga.canvas.dom.overlay.width;
+        canvas.height = Quagga.canvas.dom.overlay.height;
         let ctx = canvas.getContext("2d");
         const x = 0;
         const y = Quagga.canvas.dom.overlay.height * 0.2;
@@ -54,9 +59,6 @@ var startScanner = () => {
         ctx.rect(x,y,mw,mh);
         ctx.stroke();
 
-        console.log("Initialization finished. Ready to start");
-        Quagga.start();
-
         // Set flag to is running
         _scannerIsRunning = true;
     });
@@ -64,11 +66,6 @@ var startScanner = () => {
     Quagga.onProcessed(function (result) {
         let drawingCtx = Quagga.canvas.ctx.overlay;
         let drawingCanvas = Quagga.canvas.dom.overlay;
-
-        const x = 0;
-        const y = drawingCanvas.height * 0.2;
-        const mw = drawingCanvas.width;
-        const mh = drawingCanvas.height * 0.8;
 
         if (result) {
             // 検出中の緑の線の枠
