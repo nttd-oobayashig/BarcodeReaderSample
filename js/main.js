@@ -44,6 +44,7 @@ var startScanner = () => {
 
         console.log("Initialization finished. Ready to start");
         Quagga.start();
+        document.getElementById("photo-area").style.display = "inline";
 
         let canvas = document.getElementById("frame");
         canvas.width = Quagga.canvas.dom.overlay.width;
