@@ -34,15 +34,17 @@
             <input type="number" id="DetectedCount" value="10" step="1" min="1" max="20" class="col-1" />
         </div>
         <div class="row">
+            <label class="col-2">patchSize：</label> 
+            <input type="radio" name="patchSize" value="x-small" id="x-small" class="col-1" /><label for="x-small" class="form-check-label">x-small</label>
+            <input type="radio" name="patchSize" value="small" id="small" class="col-1" /><label for="small" class="form-check-label">small</label>
+            <input type="radio" name="patchSize" value="medium" id="medium" class="col-1" checked/><label for="medium" class="form-check-label">medium</label>
+            <input type="radio" name="patchSize" value="large" id="large" class="col-1" /><label for="large" class="form-check-label">large</label>
+            <input type="radio" name="patchSize" value="x-large" id="x-large" class="col-1" /><label for="x-large" class="form-check-label">x-large</label>
+        </div>
+        <div class="row">
             <label for="result" class="col-3">Result：</label>
             <input class="col-3" type="text" id="result" disabled value="">
         </div>
-        <!--
-        <div class="row">
-            <label for="" class="col-2">：</label> 
-            <input type="number" id="" value="15" step="1" min="1" max="60" class="col-1" />
-        </div>
-        -->
         <div class="row">
             <label for="settig" class="col-3">Setting:</label>
             <input id="setting" class="col-6" disabled>

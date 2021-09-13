@@ -35,7 +35,10 @@ var startScanner = () => {
                 showPattern: false
             }
         },
-
+        locate: true,
+        locator: {
+            patchSize: $('input:radio[name="patchSize"]:checked').val()
+        }
     }, function (err) {
         if (err) {
             console.log(err);
